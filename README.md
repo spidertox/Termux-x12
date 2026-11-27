@@ -1,23 +1,20 @@
 
-# Termux:X11
+# Termux:X12
 
-[![Nightly build](https://github.com/termux/termux-x11/actions/workflows/debug_build.yml/badge.svg?branch=master)](https://github.com/termux/termux-x11/actions/workflows/debug_build.yml) [![Join the chat at https://gitter.im/termux/termux](https://badges.gitter.im/termux/termux.svg)](https://gitter.im/termux/termux) [![Join the Termux discord server](https://img.shields.io/discord/641256914684084234?label=&logo=discord&logoColor=ffffff&color=5865F2)](https://discord.gg/HXpF69X)
+[![Build & Publish Signed Intelli Termux:X12 Release](https://github.com/spidertox/Termux-x12/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/spidertox/Termux-x12/actions/workflows/release.yml)
 
-A [Termux](https://termux.com) X11 server add-on app.
-
-## About
-Termux:X11 is a fully fledged X server. It is built with Android NDK and optimized to be used with Termux.
+**Intelli's companion X11 server app** (`com.intelli.x12`, built with Android NDK from [Termux:X11](https://github.com/termux/termux-x11)). Designed to pair with [Intelli](https://github.com/spidertox/Intelli) (`sharedUserId="com.termux"` in Intelli's Shared UID build) so Linux GUI desktops run at full speed inside Intelli's process.
 
 ## Submodules caveat
 This repo uses submodules. Use 
 
 ```
-git clone --recurse-submodules https://github.com/termux/termux-x11 
+git clone --recurse-submodules https://github.com/spidertox/Termux-x12
 ```
 or
 ```
-git clone https://github.com/termux/termux-x11
-cd termux-x11
+git clone https://github.com/spidertox/Termux-x12
+cd Termux-x12
 git submodule update --init --recursive
 ```
 
@@ -25,24 +22,27 @@ git submodule update --init --recursive
 Just like any other X server.
 
 ## Setup Instructions
-Termux:X11 requires Android 7 or later. It consists of an Android app and a companion termux package, and you must install both.
+Termux:X12 requires Android 7 or later. It consists of an Android app (`com.intelli.x12`) and a companion package (`intelli-termux-x12`), and you must install both.
 
-The Android app is available via the [nightly release tag](https://github.com/termux/termux-x11/releases/tag/nightly) of this repository. Download and install `termux-x11-universal-debug.apk`.
+The Android app is available via the [latest release](https://github.com/spidertox/Termux-x12/releases/latest) of this repository. Download and install `intelli-termux-x12-sharedUid.apk`.
 
-The companion termux package is available from the termux graphical repository. You can ensure it's enabled and install this package with `pkg i x11-repo && pkg i termux-x11-nightly`. If you need to, you can also download a `.deb` or `*.tar.xz` from the same nightly release tag as above.
+The companion package (`intelli-termux-x12-*-all.deb`) is published in the same release (or installed automatically from **Intelli → Settings → Termux Support → X11 Desktop**). If installing manually:
+```bash
+pkg install x11-repo
+apt install ./intelli-termux-x12-*-all.deb
+```
+Do not install `termux-x11-nightly` from `x11-repo`: its loader only accepts the upstream Termux:X11 signature.
 
-### Avoiding slowdowns
+### Shared UID build
 <details>
-<summary>Android gives less CPU time to apps that aren't on screen — install the sharedUid APK to avoid this</summary>
+<summary>Why the sharedUid APK is used with Intelli</summary>
 
-Android gives less CPU time to apps that aren't on screen. Once Termux:X11 opens, Android treats Termux itself as no longer being on screen, so things running inside Termux (like your desktop apps) can slow down.
+Android gives less CPU time to apps that aren't on screen. Once Termux:X12 opens, Android treats Intelli itself as no longer being on screen, so things running inside Intelli's terminal (like your desktop apps) can slow down.
 
-To avoid this, install `termux-x11-universal-sharedUid-debug.apk` instead of the regular one (same [nightly release tag](https://github.com/termux/termux-x11/releases/tag/nightly) or CI artifacts). This variant runs as part of Termux itself, so Android keeps treating it as one app and doesn't slow it down.
-
-This variant only works with the Termux app installed **from GitHub**, not F-Droid or Google Play — those are signed with different keys, and a shared UID requires matching signatures.
+The `sharedUid` build (`intelli-termux-x12-sharedUid.apk`) shares the `com.termux` UID and process with Intelli's Shared UID APK (`intelli-termux-shared-*-release.apk`) and is signed with Intelli's release certificate, so Android keeps treating both as one app.
 </details>
 
-Finally, most people will want to use a desktop environment with Termux:X11. If you don't know what that means or don't know which one to pick, run `pkg i xfce` (also from `x11-repo`) to install a good one to start with. The rest of these instructions will assume that your goal is to run an XFCE desktop, or that you can modify the instructions as you follow them for your actual goal.
+Finally, most people will want to use a desktop environment with Termux:X12. If you don't know what that means or don't know which one to pick, run `pkg i dbus xfce4` (from `x11-repo`) to install a good one to start with. The rest of these instructions will assume that your goal is to run an XFCE desktop, or that you can modify the instructions as you follow them for your actual goal.
 
 ## Running Graphical Applications
 You can start your desired graphical application by doing:
@@ -73,7 +73,7 @@ termux-x11 :1
 In this case you can save TERMUX_X11_XSTARTUP somewhere in `.bashrc` or other script and not type it every time you invoke termux-x11.  
 
 
-If you're done using Termux:X11 just simply exit it through its notification drawer by expanding the Termux:X11 notification then "Exit"
+If you're done using Termux:X12 just simply exit it through its notification drawer by expanding the Termux:X12 notification then "Exit"
 But you should pay attention that `termux-x11` command is still running and can not be killed this way.
 
 For some reason some devices output only black screen with cursor instead of normal output so you should pass `-legacy-drawing` option.
@@ -87,7 +87,7 @@ termux-x11 :1 -force-bgra -xstartup "xfce4-session"
 ```
 
 ## Running multiple displays as separate windows
-Each display normally shares the single Termux:X11 window. Pass `-tag <tag>` to open a display as its own Android window instead:
+Each display normally shares the single Termux:X12 window. Pass `-tag <tag>` to open a display as its own Android window instead:
 ```
 termux-x11 :1 -tag main -xstartup "xfce4-session"
 termux-x11 :2 -tag second -xstartup "xfce4-session"
@@ -96,7 +96,7 @@ Re-running a tag brings its window back to front instead of opening a duplicate.
 
 To bring up a tagged window's activity:
 ```
-am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity -d main
+am start --user 0 -n com.intelli.x12/com.termux.x11.MainActivity -d main
 ```
 
 ## Using with proot environment
@@ -124,13 +124,13 @@ This directory must be accessible from the shell from which you launch termux-x1
 
 Also you must set `XKB_CONFIG_ROOT` environment variable pointing to container's `/usr/share/X11/xkb` directory, otherwise you will have `xkbcomp`-related errors.
 
-You can get loader for nightly build from an artifact of [last successful build](https://github.com/termux/termux-x11/actions/workflows/debug_build.yml)
+You can get the APK and companion package from [the latest release](https://github.com/spidertox/Termux-x12/releases/latest).
 
 Do not forget to disable SELinux
 ```
 setenforce 0
 export TMPDIR=/path/to/chroot/container/tmp
-export CLASSPATH=$(/system/bin/pm path com.termux.x11 | cut -d: -f2)
+export CLASSPATH=$(/system/bin/pm path com.intelli.x12 | cut -d: -f2)
 /system/bin/app_process / --nice-name=termux-x11 com.termux.x11.CmdEntryPoint :0
 ```
 
@@ -144,22 +144,22 @@ pkill -f termux-x11
 ### Closing Android activity (running in foreground, not X server)
 
 ```
-am broadcast -a com.termux.x11.ACTION_STOP -p com.termux.x11
+am broadcast -a com.termux.x11.ACTION_STOP -p com.intelli.x12
 ```
 
 To close a window opened with `-tag`:
 ```
-am broadcast -a com.termux.x11.ACTION_STOP -p com.termux.x11 --es document_tag main
+am broadcast -a com.termux.x11.ACTION_STOP -p com.intelli.x12 --es document_tag main
 ```
 
-### Opening Termux:X11 activity from command line
+### Opening Termux:X12 activity from command line
 
 ```
-am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity
+am start --user 0 -n com.intelli.x12/com.termux.x11.MainActivity
 ```
 
 ### Logs
-If you need to obtain logs from the `com.termux.x11` application,
+If you need to obtain logs from the `com.intelli.x12` application,
 set the `TERMUX_X11_DEBUG` environment variable to 1, like this:
 `TERMUX_X11_DEBUG=1 termux-x11 :0`
 
@@ -167,7 +167,7 @@ The log obtained in this way can be quite long.
 It's better to redirect the output of the command to a file right away.
 
 ### Notification
-In Android 13, posting notifications was restricted so you should explicitly let Termux:X11 show you notifications.
+In Android 13, posting notifications was restricted so you should explicitly let Termux:X12 show you notifications.
 <details>
 <summary>Video</summary>
 
@@ -188,7 +188,7 @@ You can access preferences menu three ways:
 ![image](./.github/static/2.jpg)
 </details>
 <details>
-<summary>By clicking "Preferences" application shortcut (long tap `Termux:X11` icon in launcher). </summary>
+<summary>By clicking "Preferences" application shortcut (long tap `Termux:X12` icon in launcher). </summary>
 
 ![image](./.github/static/3.jpg)
 </details>
@@ -234,8 +234,8 @@ termux-x11 :1 -xstartup "xfce4-session" -dpi 120
 
 ## Changing, dumping and restoring preferences from commandline
 
-It is possible to change preferences of termux-x11 from command line.
-`termux-x11-nightly` package contains `termux-x11-preference` tool which can be used like 
+It is possible to change preferences of Termux:X12 from command line.
+The `intelli-termux-x12` package contains `termux-x11-preference` tool which can be used like 
 ```shell
 termux-x11-preference [list] {key:value} [{key2:value2}]...
 ```
@@ -245,11 +245,11 @@ Use `termux-x11-preference list > file` to dump current preferences to file.
 Use `termux-x11-preference < file` to restore preferences from file.
 Use `termux-x11-preference "fullscreen"="false" "showAdditionalKbd"="true"` to disable fullscreen and enable additional key bar. The full list of preferences you can modify is available with `termux-x11-preference list` command. You can specify one or more preferences here.
 
-Termux:X11 activity should be available in background or foreground, otherwise `termux-x11-preference` tool will hang indefinitely.
-In the case if there is `Store preferences for secondary displays separately` preference active `termux-x11-preference` will use/modify preferences of display where Termux:X11 activity is currently opened.
+Termux:X12 activity should be available in background or foreground, otherwise `termux-x11-preference` tool will hang indefinitely.
+In the case if there is `Store preferences for secondary displays separately` preference active `termux-x11-preference` will use/modify preferences of display where Termux:X12 activity is currently opened.
 
 ## Using with 3rd party apps
-It is possible to use Termux:X11 with 3rd party apps.
+It is possible to use Termux:X12 with 3rd party apps.
 Check how `shell-loader/src/main/java/com/termux/x11/Loader.java` works.
 
 # License

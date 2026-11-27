@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <!-- AntiGem: X11 sends ACTION_PREFERENCES_CHANGED to its own receiver, which needs AntiGem's permission (granted
-         when X11 is signed like AntiGem; in the shared UID it has it anyway) -->
-    <uses-permission android:name="${antigemApp}.permission.RUN_COMMAND" />
+    <!-- Intelli: X11 sends ACTION_PREFERENCES_CHANGED to its own receiver, which needs Intelli's permission (granted
+         when X11 is signed like Intelli; in the shared UID it has it anyway) -->
+    <uses-permission android:name="${intelliApp}.permission.RUN_COMMAND" />
 
     <application
         android:name=".LorieApp"
@@ -65,7 +65,7 @@
 
         <service android:name=".utils.KeyInterceptor"
             android:exported="true"
-            android:label="Termux:X11 KeyInterceptor"
+            android:label="Termux:X12 KeyInterceptor"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -76,18 +76,18 @@
                 android:resource="@xml/accessibility_service_config" />
         </service>
 
-        <!-- AntiGem: only AntiGem (its terminal and the X server it starts; root in chroot mode passes too) may send
+        <!-- Intelli: only Intelli (its terminal and the X server it starts; root in chroot mode passes too) may send
              these. Open to every app, any app could change X11's settings, or hand X11 a fake X server
-             (ACTION_START) that gets the keystrokes, draws the screen and gets a logcat stream of AntiGem's UID. -->
+             (ACTION_START) that gets the keystrokes, draws the screen and gets a logcat stream of Intelli's UID. -->
         <receiver android:name=".LoriePreferences$Receiver" android:exported="true" tools:ignore="ExportedReceiver" android:enabled="true"
-            android:permission="${antigemApp}.permission.RUN_COMMAND">
+            android:permission="${intelliApp}.permission.RUN_COMMAND">
             <intent-filter>
                 <action android:name="com.termux.x11.CHANGE_PREFERENCE" />
             </intent-filter>
         </receiver>
 
         <receiver android:name=".LorieApp$Receiver" android:exported="true" tools:ignore="ExportedReceiver" android:enabled="true"
-            android:permission="${antigemApp}.permission.RUN_COMMAND">
+            android:permission="${intelliApp}.permission.RUN_COMMAND">
             <intent-filter>
                 <action android:name="com.termux.x11.CmdEntryPoint.ACTION_START" />
                 <action android:name="com.termux.x11.ACTION_STOP" />

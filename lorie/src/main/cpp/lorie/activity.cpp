@@ -394,7 +394,7 @@ extern char* __progname;
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, __unused void *reserved) {
     JNIEnv* env;
 
-    if (!strcmp(__progname, "com.termux.x11")) {
+    if (!strcmp(__progname, "com.termux.x11") || !strcmp(__progname, "com.intelli.x12")) {
         // Redirects stderr to logcat.
         pthread_create([]{ static pthread_t t; return &t; }(), nullptr, +[](__unused void* cookie) -> void* {
             FILE *fp;

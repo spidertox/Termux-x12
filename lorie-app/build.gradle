@@ -13,11 +13,11 @@ abstract class VerifySharedUidProcess extends DefaultTask {
         def root = new XmlSlurper(false, false).parse(manifest.get().asFile)
         def appProcess = root.application.@'android:process'.text()
         def offenders = ['activity', 'activity-alias', 'service', 'receiver', 'provider'].collectMany { type ->
-            root.application."$type".findAll { (it.@'android:process'.text() ?: appProcess) != 'ai.antigem' }
+            root.application."$type".findAll { (it.@'android:process'.text() ?: appProcess) != 'com.termux' }
                 .collect { "$type ${it.@'android:name'}" }
         }
         if (!offenders.isEmpty())
-            throw new GradleException("sharedUid components must run in process ai.antigem: ${offenders.join(', ')}")
+            throw new GradleException("sharedUid components must run in process com.termux: ${offenders.join(', ')}")
     }
 }
 
@@ -26,9 +26,9 @@ android {
     compileSdkVersion 34
     ndkVersion termuxX11NdkVersion
     defaultConfig {
-        applicationId "ai.antigem.x11"
-        // AntiGem's package: its RUN_COMMAND permission guards X11's receivers (debug AntiGem is ai.antidev)
-        manifestPlaceholders.put('antigemApp', 'ai.antigem')
+        applicationId "com.intelli.x12"
+        // Intelli's sharedUid package (com.termux): its RUN_COMMAND permission guards X11's receivers.
+        manifestPlaceholders.put('intelliApp', 'com.termux')
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 15
@@ -53,15 +53,15 @@ android {
         keyPassword 'xrj45yWGLbsO7W0v'
     }
 
-    // AntiGem: same certificate as AntiGem's release APK, so the sharedUid variant can join
-    // AntiGem's com.termux shared UID. release.jks is not committed; CI restores it from the
+    // Intelli: same certificate as Intelli's release APK, so the sharedUid variant can join
+    // Intelli's com.termux shared UID. release.jks is not committed; CI restores it from the
     // RELEASE_KEYSTORE_BASE64 secret.
     signingConfigs {
-        antigem {
+        intelli {
             storeFile file('release.jks')
-            storePassword '123456'
-            keyAlias 'antigem'
-            keyPassword '123456'
+            storePassword System.getenv('KEYSTORE_PASSWORD') ?: '123456'
+            keyAlias System.getenv('KEYSTORE_ALIAS') ?: 'antigem'
+            keyPassword System.getenv('KEY_PASSWORD') ?: '123456'
         }
     }
 
@@ -69,15 +69,14 @@ android {
     compileOptions.targetCompatibility JavaVersion.VERSION_1_9
     buildTypes.debug {
         signingConfig signingConfigs.debug
-        manifestPlaceholders.put('antigemApp', 'ai.antidev')
         minifyEnabled true
         shrinkResources true
         proguardFiles 'proguard-rules.pro'
     }
-    // AntiGem: non-debuggable build for releases. A debuggable APK in AntiGem's shared UID would
-    // let `adb shell run-as com.termux.x11` read AntiGem's private data.
+    // Intelli: non-debuggable build for releases. A debuggable APK in Intelli's shared UID would
+    // let `adb shell run-as com.intelli.x12` read Intelli's private data.
     buildTypes.release {
-        signingConfig signingConfigs.antigem
+        signingConfig signingConfigs.intelli
         minifyEnabled true
         shrinkResources true
         proguardFiles 'proguard-rules.pro'
@@ -89,7 +88,7 @@ androidComponents {
     onVariants(selector().all()) { variant ->
         def name = variant.flavorName == 'standalone' ? variant.buildType : "${variant.flavorName}-${variant.buildType}"
         variant.outputs.each { output ->
-            output.outputFileName.set("termux-x11-universal-${name}.apk")
+            output.outputFileName.set("intelli-termux-x12-${name}.apk")
         }
         if (variant.flavorName == 'sharedUid') {
             def verify = tasks.register("verify${variant.name.capitalize()}Process", VerifySharedUidProcess) {

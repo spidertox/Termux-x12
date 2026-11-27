@@ -1,12 +1,13 @@
-name: Build & Publish Signed Termux:X11 Release
+name: Build & Publish Signed Intelli Termux:X12 Release
 
-# Builds the sharedUid Termux:X11 APK signed with AntiGem's release certificate, plus the
-# matching companion package, and publishes them as a GitHub release.
-# Works only with AntiGem's "termux shared UID" APK (com.termux, sharedUserId com.termux).
+# Builds the sharedUid Termux:X12 APK (com.intelli.x12) signed with Intelli's release certificate, plus the
+# matching companion package (intelli-termux-x12), and publishes them as a GitHub release.
+# Works with Intelli's "termux shared UID" APK (com.termux, sharedUserId com.termux).
 
 on:
   push:
     branches:
+      - main
       - master
     paths-ignore:
       - '**.md'
@@ -44,7 +45,7 @@ jobs:
           git remote add upstream https://github.com/termux/termux-x11.git || true
           git fetch upstream master
           if git merge upstream/master --no-edit; then
-            git push origin master || echo "No changes to push or push not allowed"
+            git push origin HEAD || echo "No changes to push or push not allowed"
           else
             echo "Merge conflict with upstream; skipping auto-sync merge"
             git merge --abort || true
@@ -62,13 +63,21 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Restore Keystore from Secret
+      - name: Restore or Generate Keystore
         run: |
-          if [ -z "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" ]; then
-            echo "Error: RELEASE_KEYSTORE_BASE64 secret is missing in GitHub repository settings."
-            exit 1
+          if [ -n "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > lorie-app/release.jks
+            echo "Keystore restored from secret."
+          else
+            echo "No RELEASE_KEYSTORE_BASE64 secret found. Generating an ephemeral keystore for this build."
+            keytool -genkeypair -v \
+              -keystore lorie-app/release.jks \
+              -alias "${KEYSTORE_ALIAS:-antigem}" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "${KEYSTORE_PASSWORD:-123456}" -keypass "${KEY_PASSWORD:-123456}" \
+              -dname "CN=Intelli, OU=Dev, O=spidertox, L=Unknown, ST=Unknown, C=US"
+            echo "Ephemeral keystore generated. Set RELEASE_KEYSTORE_BASE64 to match Intelli's release signing key for sharedUid."
           fi
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > lorie-app/release.jks
 
       - name: Extract Version Info
         id: version
@@ -88,38 +97,38 @@ jobs:
         id: artifacts
         run: |
           mkdir -p release_output
-          APK_NAME="antigem-termux-x11-sharedUid.apk"
-          cp lorie-app/build/outputs/apk/sharedUid/release/termux-x11-universal-sharedUid-release.apk "release_output/${APK_NAME}"
-          cp shell-loader/build/outputs/companion/antigem-termux-x11-*-all.deb release_output/
-          cp shell-loader/build/outputs/companion/antigem-termux-x11-*-any.pkg.tar.xz release_output/
+          APK_NAME="intelli-termux-x12-sharedUid.apk"
+          cp lorie-app/build/outputs/apk/sharedUid/release/intelli-termux-x12-sharedUid-release.apk "release_output/${APK_NAME}"
+          cp shell-loader/build/outputs/companion/intelli-termux-x12-*-all.deb release_output/
+          cp shell-loader/build/outputs/companion/intelli-termux-x12-*-any.pkg.tar.xz release_output/
           (cd release_output && sha256sum * > checksums-sha256.txt)
           echo "apk_name=${APK_NAME}" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: antigem-termux-x11-v${{ steps.version.outputs.version_name }}
+          name: intelli-termux-x12-v${{ steps.version.outputs.version_name }}
           path: release_output/*
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           target_commitish: ${{ steps.version.outputs.sha }}
-          name: AntiGem Termux:X11 v${{ steps.version.outputs.version_name }}
+          name: Intelli Termux:X12 v${{ steps.version.outputs.version_name }}
           body: |
-            Termux:X11 (sharedUid variant) signed with the AntiGem release certificate.
+            Termux:X12 (`com.intelli.x12`, sharedUid variant) signed with Intelli's release certificate.
 
-            Works only with AntiGem's termux shared UID APK (`antiGem-termux-shared-*.apk`).
-            It runs inside AntiGem's process, so Android does not slow down or kill the
+            Works with Intelli's termux shared UID APK (`intelli-termux-shared-*.apk`, `com.termux`, `sharedUserId="com.termux"`).
+            It runs inside Intelli's process, so Android does not slow down or kill the
             X server and desktop while you are looking at it.
 
             Install:
-            1. Install `antigem-termux-x11-sharedUid.apk`.
-            2. In AntiGem's terminal: `pkg install x11-repo`, then
-               `dpkg -i antigem-termux-x11-*-all.deb` (or `apt install ./antigem-termux-x11-*-all.deb`).
-            3. `pkg install xfce` and run `termux-x11 :0 -xstartup xfce4-session`.
+            1. Install `intelli-termux-x12-sharedUid.apk`.
+            2. In Intelli's terminal: `pkg install x11-repo`, then
+               `dpkg -i intelli-termux-x12-*-all.deb` (or `apt install ./intelli-termux-x12-*-all.deb`).
+            3. `pkg install dbus xfce4` and run `termux-x11 :0 -xstartup "dbus-launch --exit-with-session xfce4-session"`.
 
             Do not install `termux-x11-nightly` from x11-repo: its loader only accepts the
             official Termux:X11 signature.

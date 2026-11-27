@@ -19,13 +19,13 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 import java.security.MessageDigest
 
-// AntiGem: own package name, so `pkg upgrade` never swaps in x11-repo's termux-x11-nightly,
+// Intelli: own package name, so `pkg upgrade` never swaps in x11-repo's termux-x11-nightly,
 // whose loader only accepts the official Termux:X11 signature.
-def pkgName = 'antigem-termux-x11'
+def pkgName = 'intelli-termux-x12'
 def pkgVersion = (file("$rootDir/lorie/version.gradle").text =~ /version = "([^"]+)"/)[0][1] + '-0'
-def pkgDescription = 'Companion package for termux-x11 app'
-def pkgHomepage = 'https://github.com/Santoshkurmi/termux-x11'
-def pkgMaintainer = 'Twaik Yont @twaik'
+def pkgDescription = 'Companion package for Intelli Termux:X12 app'
+def pkgHomepage = 'https://github.com/spidertox/Termux-x12'
+def pkgMaintainer = 'spidertox'
 def pkgDepends = 'xkeyboard-config'
 
 def outputDir = layout.buildDirectory.dir('outputs/companion').get().asFile
@@ -84,8 +84,8 @@ Maintainer: $pkgMaintainer
 Version: $pkgVersion
 Homepage: $pkgHomepage
 Depends: $pkgDepends
-Conflicts: termux-x11-nightly, termux-x11
-Replaces: termux-x11-nightly, termux-x11
+Conflicts: termux-x11-nightly, termux-x11, antigem-termux-x11
+Replaces: termux-x11-nightly, termux-x11, antigem-termux-x11
 Provides: termux-x11-nightly, termux-x11
 Description: $pkgDescription
 """
@@ -151,8 +151,10 @@ arch = any
 license = GPL-3.0
 replaces = termux-x11
 replaces = termux-x11-nightly
+replaces = antigem-termux-x11
 conflict = termux-x11
 conflict = termux-x11-nightly
+conflict = antigem-termux-x11
 provides = termux-x11
 provides = termux-x11-nightly
 ${pacmanDepends.join('\n')}

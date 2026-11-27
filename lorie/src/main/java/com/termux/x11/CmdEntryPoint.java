@@ -62,7 +62,7 @@ public class CmdEntryPoint extends ICmdEntryInterface.Stub {
 
     @SuppressLint({"WrongConstant", "PrivateApi"})
     private Intent createIntent() {
-        // We should not care about multiple instances, it should be called only by `Termux:X11` app
+        // We should not care about multiple instances, it should be called only by `Termux:X12` app
         // which is single instance...
         Bundle bundle = new Bundle();
         bundle.putBinder(null, this);
