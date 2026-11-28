@@ -56,7 +56,7 @@ static jmethodID setDocumentTag = nullptr;
 
 /**
  * `subpath` inside Termux's prefix: $PREFIX first, so it works whatever the app's package name is (Intelli's
- * com.termux, com.intelli, ...), then Termux's own /data/data/com.termux/files/usr. Returns a static buffer (use it
+ * ai.intelli, com.termux, ...), then Termux's own /data/data/com.termux/files/usr. Returns a static buffer (use it
  * before the next call), or nullptr when neither has it.
  */
 static const char* termuxPath(const char* subpath) {

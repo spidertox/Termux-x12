@@ -97,6 +97,6 @@
         </receiver>
     </application>
     <queries>
-        <package android:name="com.termux" />
+        <package android:name="${intelliApp}" />
     </queries>
 </manifest>

@@ -28,10 +28,10 @@ def signingConfig = project(':lorie-app').android.signingConfigs.intelli
 def keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType())
 keyStore.load(new FileInputStream(signingConfig.storeFile), signingConfig.keyPassword.toCharArray())
 
-// Intelli: the loader starts Intelli's Termux:X12 (lorie-app's applicationId, com.intelli.x12), and the companion
-// package's scripts live in Intelli's sharedUid Linux system (/data/data/com.termux/files/usr). The Java names stay com.termux.x11.*
+// Intelli: the loader starts Intelli's Termux:X12 (lorie-app's applicationId, ai.intelli.x12), and the companion
+// package's scripts live in Intelli's sharedUid Linux system (/data/data/ai.intelli/files/usr). The Java names stay com.termux.x11.*
 ext.targetApplicationId = project(':lorie-app').android.defaultConfig.applicationId
-ext.embeddedApplicationId = "com.termux"
+ext.embeddedApplicationId = "ai.intelli"
 
 android.defaultConfig.buildConfigField "String", "APPLICATION_ID", "\"$targetApplicationId\""
 android.defaultConfig.buildConfigField "String", "EMBEDDED_APPLICATION_ID", "\"$embeddedApplicationId\""

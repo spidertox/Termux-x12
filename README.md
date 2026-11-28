@@ -3,7 +3,7 @@
 
 [![Build & Publish Signed Intelli Termux:X12 Release](https://github.com/spidertox/Termux-x12/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/spidertox/Termux-x12/actions/workflows/release.yml)
 
-**Intelli's companion X11 server app** (`com.intelli.x12`, built with Android NDK from [Termux:X11](https://github.com/termux/termux-x11)). Designed to pair with [Intelli](https://github.com/spidertox/Intelli) (`sharedUserId="com.termux"` in Intelli's Shared UID build) so Linux GUI desktops run at full speed inside Intelli's process.
+**Intelli's companion X11 server app** (`ai.intelli.x12`, built with Android NDK from [Termux:X11](https://github.com/termux/termux-x11)). Designed to pair with [Intelli](https://github.com/spidertox/Intelli) (`sharedUserId="ai.intelli"`) so Linux GUI desktops run at full speed inside Intelli's process.
 
 ## Submodules caveat
 This repo uses submodules. Use 
@@ -22,7 +22,7 @@ git submodule update --init --recursive
 Just like any other X server.
 
 ## Setup Instructions
-Termux:X12 requires Android 7 or later. It consists of an Android app (`com.intelli.x12`) and a companion package (`intelli-termux-x12`), and you must install both.
+Termux:X12 requires Android 7 or later. It consists of an Android app (`ai.intelli.x12`) and a companion package (`intelli-termux-x12`), and you must install both.
 
 The Android app is available via the [latest release](https://github.com/spidertox/Termux-x12/releases/latest) of this repository. Download and install `intelli-termux-x12-sharedUid.apk`.
 
@@ -39,7 +39,7 @@ Do not install `termux-x11-nightly` from `x11-repo`: its loader only accepts the
 
 Android gives less CPU time to apps that aren't on screen. Once Termux:X12 opens, Android treats Intelli itself as no longer being on screen, so things running inside Intelli's terminal (like your desktop apps) can slow down.
 
-The `sharedUid` build (`intelli-termux-x12-sharedUid.apk`) shares the `com.termux` UID and process with Intelli's Shared UID APK (`intelli-termux-shared-*-release.apk`) and is signed with Intelli's release certificate, so Android keeps treating both as one app.
+The `sharedUid` build (`intelli-termux-x12-sharedUid.apk`) shares the `ai.intelli` UID and process with Intelli (`ai.intelli`, `sharedUserId="ai.intelli"`) and is signed with Intelli's release certificate, so Android keeps treating both as one app.
 </details>
 
 Finally, most people will want to use a desktop environment with Termux:X12. If you don't know what that means or don't know which one to pick, run `pkg i dbus xfce4` (from `x11-repo`) to install a good one to start with. The rest of these instructions will assume that your goal is to run an XFCE desktop, or that you can modify the instructions as you follow them for your actual goal.
@@ -96,7 +96,7 @@ Re-running a tag brings its window back to front instead of opening a duplicate.
 
 To bring up a tagged window's activity:
 ```
-am start --user 0 -n com.intelli.x12/com.termux.x11.MainActivity -d main
+am start --user 0 -n ai.intelli.x12/com.termux.x11.MainActivity -d main
 ```
 
 ## Using with proot environment
@@ -130,7 +130,7 @@ Do not forget to disable SELinux
 ```
 setenforce 0
 export TMPDIR=/path/to/chroot/container/tmp
-export CLASSPATH=$(/system/bin/pm path com.intelli.x12 | cut -d: -f2)
+export CLASSPATH=$(/system/bin/pm path ai.intelli.x12 | cut -d: -f2)
 /system/bin/app_process / --nice-name=termux-x11 com.termux.x11.CmdEntryPoint :0
 ```
 
@@ -144,22 +144,22 @@ pkill -f termux-x11
 ### Closing Android activity (running in foreground, not X server)
 
 ```
-am broadcast -a com.termux.x11.ACTION_STOP -p com.intelli.x12
+am broadcast -a com.termux.x11.ACTION_STOP -p ai.intelli.x12
 ```
 
 To close a window opened with `-tag`:
 ```
-am broadcast -a com.termux.x11.ACTION_STOP -p com.intelli.x12 --es document_tag main
+am broadcast -a com.termux.x11.ACTION_STOP -p ai.intelli.x12 --es document_tag main
 ```
 
 ### Opening Termux:X12 activity from command line
 
 ```
-am start --user 0 -n com.intelli.x12/com.termux.x11.MainActivity
+am start --user 0 -n ai.intelli.x12/com.termux.x11.MainActivity
 ```
 
 ### Logs
-If you need to obtain logs from the `com.intelli.x12` application,
+If you need to obtain logs from the `ai.intelli.x12` application,
 set the `TERMUX_X11_DEBUG` environment variable to 1, like this:
 `TERMUX_X11_DEBUG=1 termux-x11 :0`
 

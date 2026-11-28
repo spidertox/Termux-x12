@@ -1,8 +1,8 @@
 name: Build & Publish Signed Intelli Termux:X12 Release
 
-# Builds the sharedUid Termux:X12 APK (com.intelli.x12) signed with Intelli's release certificate, plus the
+# Builds the sharedUid Termux:X12 APK (ai.intelli.x12) signed with Intelli's release certificate, plus the
 # matching companion package (intelli-termux-x12), and publishes them as a GitHub release.
-# Works with Intelli's "termux shared UID" APK (com.termux, sharedUserId com.termux).
+# Works with Intelli (ai.intelli, sharedUserId="ai.intelli").
 
 on:
   push:
@@ -118,9 +118,9 @@ jobs:
           target_commitish: ${{ steps.version.outputs.sha }}
           name: Intelli Termux:X12 v${{ steps.version.outputs.version_name }}
           body: |
-            Termux:X12 (`com.intelli.x12`, sharedUid variant) signed with Intelli's release certificate.
+            Termux:X12 (`ai.intelli.x12`, sharedUid variant) signed with Intelli's release certificate.
 
-            Works with Intelli's termux shared UID APK (`intelli-termux-shared-*.apk`, `com.termux`, `sharedUserId="com.termux"`).
+            Works with Intelli (`ai.intelli`, `sharedUserId="ai.intelli"`).
             It runs inside Intelli's process, so Android does not slow down or kill the
             X server and desktop while you are looking at it.
 

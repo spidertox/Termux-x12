@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:sharedUserId="com.termux"
+    android:sharedUserId="ai.intelli"
     tools:ignore="Deprecated">
-    <!-- Keeps termux-x11's process from being classified separately from termux's own cpuset. -->
-    <application android:process="com.termux" />
+    <!-- Keeps termux-x11's process from being classified separately from Intelli's own cpuset. -->
+    <application android:process="ai.intelli" />
 </manifest>

@@ -13,11 +13,11 @@ abstract class VerifySharedUidProcess extends DefaultTask {
         def root = new XmlSlurper(false, false).parse(manifest.get().asFile)
         def appProcess = root.application.@'android:process'.text()
         def offenders = ['activity', 'activity-alias', 'service', 'receiver', 'provider'].collectMany { type ->
-            root.application."$type".findAll { (it.@'android:process'.text() ?: appProcess) != 'com.termux' }
+            root.application."$type".findAll { (it.@'android:process'.text() ?: appProcess) != 'ai.intelli' }
                 .collect { "$type ${it.@'android:name'}" }
         }
         if (!offenders.isEmpty())
-            throw new GradleException("sharedUid components must run in process com.termux: ${offenders.join(', ')}")
+            throw new GradleException("sharedUid components must run in process ai.intelli: ${offenders.join(', ')}")
     }
 }
 
@@ -26,9 +26,9 @@ android {
     compileSdkVersion 34
     ndkVersion termuxX11NdkVersion
     defaultConfig {
-        applicationId "com.intelli.x12"
-        // Intelli's sharedUid package (com.termux): its RUN_COMMAND permission guards X11's receivers.
-        manifestPlaceholders.put('intelliApp', 'com.termux')
+        applicationId "ai.intelli.x12"
+        // Intelli's package (ai.intelli): its RUN_COMMAND permission guards X11's receivers.
+        manifestPlaceholders.put('intelliApp', 'ai.intelli')
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 15
@@ -54,7 +54,7 @@ android {
     }
 
     // Intelli: same certificate as Intelli's release APK, so the sharedUid variant can join
-    // Intelli's com.termux shared UID. release.jks is not committed; CI restores it from the
+    // Intelli's ai.intelli shared UID. release.jks is not committed; CI restores it from the
     // RELEASE_KEYSTORE_BASE64 secret.
     signingConfigs {
         intelli {
@@ -74,7 +74,7 @@ android {
         proguardFiles 'proguard-rules.pro'
     }
     // Intelli: non-debuggable build for releases. A debuggable APK in Intelli's shared UID would
-    // let `adb shell run-as com.intelli.x12` read Intelli's private data.
+    // let `adb shell run-as ai.intelli.x12` read Intelli's private data.
     buildTypes.release {
         signingConfig signingConfigs.intelli
         minifyEnabled true
